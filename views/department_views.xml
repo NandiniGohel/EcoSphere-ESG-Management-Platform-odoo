@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit hr.department form to add ESG tab -->
+    <record id="view_department_form_esg_inherit" model="ir.ui.view">
+        <field name="name">hr.department.form.esg.inherit</field>
+        <field name="model">hr.department</field>
+        <field name="inherit_id" ref="hr.view_department_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="ESG" name="esg_page">
+                    <group>
+                        <group string="ESG Management">
+                            <field name="esg_head_id"/>
+                            <field name="esg_status"/>
+                            <field name="carbon_budget"/>
+                        </group>
+                        <group string="ESG Scores">
+                            <field name="environmental_score" widget="progressbar"/>
+                            <field name="social_score" widget="progressbar"/>
+                            <field name="governance_score" widget="progressbar"/>
+                            <field name="total_score" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <group string="Carbon Budget">
+                        <group>
+                            <field name="carbon_used"/>
+                            <field name="carbon_remaining"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit hr.department list view to add ESG columns -->
+    <record id="view_department_tree_esg_inherit" model="ir.ui.view">
+        <field name="name">hr.department.tree.esg.inherit</field>
+        <field name="model">hr.department</field>
+        <field name="inherit_id" ref="hr.view_department_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="esg_head_id" optional="show"/>
+                <field name="total_score" optional="show"
+                       decoration-success="total_score &gt;= 70"
+                       decoration-warning="total_score &gt;= 40 and total_score &lt; 70"
+                       decoration-danger="total_score &lt; 40"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

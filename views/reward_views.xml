@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Reward List View -->
+    <record id="view_esg_reward_tree" model="ir.ui.view">
+        <field name="name">esg.reward.tree</field>
+        <field name="model">esg.reward</field>
+        <field name="arch" type="xml">
+            <list string="Rewards">
+                <field name="image_64" widget="image" options="{&quot;size&quot;: [32, 32]}"/>
+                <field name="name"/>
+                <field name="reward_type"/>
+                <field name="xp_cost"/>
+                <field name="stock_quantity"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Reward Form View -->
+    <record id="view_esg_reward_form" model="ir.ui.view">
+        <field name="name">esg.reward.form</field>
+        <field name="model">esg.reward</field>
+        <field name="arch" type="xml">
+            <form string="ESG Reward">
+                <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Reward Details">
+                            <field name="reward_type"/>
+                            <field name="xp_cost"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Stock">
+                            <field name="stock_quantity"/>
+                            <field name="unlimited_stock"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1" widget="html"/>
+                    </group>
+                    <notebook>
+                        <page string="Redemptions">
+                            <field name="redemption_ids">
+                                <list>
+                                    <field name="employee_id"/>
+                                    <field name="redemption_date"/>
+                                    <field name="xp_spent"/>
+                                    <field name="state" widget="badge"
+                                           decoration-warning="state == 'pending'"
+                                           decoration-success="state == 'approved'"
+                                           decoration-danger="state == 'rejected'"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Reward Search -->
+    <record id="view_esg_reward_search" model="ir.ui.view">
+        <field name="name">esg.reward.search</field>
+        <field name="model">esg.reward</field>
+        <field name="arch" type="xml">
+            <search string="Search Rewards">
+                <field name="name"/>
+                <field name="reward_type"/>
+                <separator/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Type" name="group_type" context="{'group_by': 'reward_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Reward Action -->
+    <record id="action_esg_reward" model="ir.actions.act_window">
+        <field name="name">Rewards</field>
+        <field name="res_model">esg.reward</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_esg_reward_search"/>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Reward Redemption List View -->
+    <record id="view_esg_reward_redemption_tree" model="ir.ui.view">
+        <field name="name">esg.reward.redemption.tree</field>
+        <field name="model">esg.reward.redemption</field>
+        <field name="arch" type="xml">
+            <list string="Reward Redemptions"
+                  decoration-warning="state == 'pending'"
+                  decoration-success="state == 'approved'">
+                <field name="employee_id"/>
+                <field name="reward_id"/>
+                <field name="redemption_date"/>
+                <field name="xp_spent"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'pending'"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Reward Redemption Form View -->
+    <record id="view_esg_reward_redemption_form" model="ir.ui.view">
+        <field name="name">esg.reward.redemption.form</field>
+        <field name="model">esg.reward.redemption</field>
+        <field name="arch" type="xml">
+            <form string="Reward Redemption">
+                <header>
+                    <button name="action_approve" string="Approve" type="object"
+                            invisible="state != 'pending'" class="btn-success"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            invisible="state != 'pending'" class="btn-danger"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,approved,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Redemption Details">
+                            <field name="employee_id"/>
+                            <field name="reward_id"/>
+                            <field name="redemption_date"/>
+                            <field name="xp_spent"/>
+                        </group>
+                        <group string="Approval">
+                            <field name="approved_by_id"/>
+                            <field name="approval_date"/>
+                            <field name="rejection_reason"
+                                   invisible="state != 'rejected'"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Reward Redemption Action -->
+    <record id="action_esg_reward_redemption" model="ir.actions.act_window">
+        <field name="name">Reward Redemptions</field>
+        <field name="res_model">esg.reward.redemption</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+    </record>
+</odoo>

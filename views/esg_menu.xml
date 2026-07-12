@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top-level ESG Management Menu -->
+    <menuitem id="menu_esg_root"
+              name="ESG Management"
+              sequence="50"
+              groups="esg_management.group_esg_user"/>
+
+    <!-- Environmental -->
+    <menuitem id="menu_esg_environmental"
+              name="Environmental"
+              parent="menu_esg_root"
+              sequence="10"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_carbon_transactions"
+              name="Carbon Transactions"
+              parent="menu_esg_environmental"
+              sequence="10"
+              action="esg_management.action_esg_carbon_transaction"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_emission_factors"
+              name="Emission Factors"
+              parent="menu_esg_environmental"
+              sequence="20"
+              action="esg_management.action_esg_emission_factor"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_environmental_goals"
+              name="Environmental Goals"
+              parent="menu_esg_environmental"
+              sequence="30"
+              action="esg_management.action_esg_environmental_goal"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_env_reports"
+              name="Reports"
+              parent="menu_esg_environmental"
+              sequence="40"
+              action="esg_management.action_esg_report_builder_wizard"
+              groups="esg_management.group_esg_user"/>
+
+    <!-- Social -->
+    <menuitem id="menu_esg_social"
+              name="Social"
+              parent="menu_esg_root"
+              sequence="20"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_csr_activities"
+              name="CSR Activities"
+              parent="menu_esg_social"
+              sequence="10"
+              action="esg_management.action_esg_csr_activity"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_employee_participation"
+              name="Employee Participation"
+              parent="menu_esg_social"
+              sequence="20"
+              action="esg_management.action_esg_employee_participation"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_challenges"
+              name="Challenges"
+              parent="menu_esg_social"
+              sequence="30"
+              action="esg_management.action_esg_challenge"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_challenge_participation"
+              name="Challenge Participation"
+              parent="menu_esg_social"
+              sequence="40"
+              action="esg_management.action_esg_challenge_participation"
+              groups="esg_management.group_esg_user"/>
+
+    <!-- Governance -->
+    <menuitem id="menu_esg_governance"
+              name="Governance"
+              parent="menu_esg_root"
+              sequence="30"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_policies"
+              name="Policies"
+              parent="menu_esg_governance"
+              sequence="10"
+              action="esg_management.action_esg_policy"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_policy_acknowledgements"
+              name="Policy Acknowledgements"
+              parent="menu_esg_governance"
+              sequence="20"
+              action="esg_management.action_esg_policy_acknowledgement"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_audits"
+              name="Audits"
+              parent="menu_esg_governance"
+              sequence="30"
+              action="esg_management.action_esg_audit"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_compliance_issues"
+              name="Compliance Issues"
+              parent="menu_esg_governance"
+              sequence="40"
+              action="esg_management.action_esg_compliance_issue"
+              groups="esg_management.group_esg_user"/>
+
+    <!-- Gamification -->
+    <menuitem id="menu_esg_gamification"
+              name="Gamification"
+              parent="menu_esg_root"
+              sequence="40"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_xp_transactions"
+              name="XP Transactions"
+              parent="menu_esg_gamification"
+              sequence="10"
+              action="esg_management.action_esg_xp_transaction"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_badges"
+              name="Badges"
+              parent="menu_esg_gamification"
+              sequence="20"
+              action="esg_management.action_esg_badge"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_employee_badges"
+              name="Employee Badges"
+              parent="menu_esg_gamification"
+              sequence="30"
+              action="esg_management.action_esg_employee_badge"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_rewards"
+              name="Rewards"
+              parent="menu_esg_gamification"
+              sequence="40"
+              action="esg_management.action_esg_reward"
+              groups="esg_management.group_esg_user"/>
+
+    <!-- Dashboard -->
+    <menuitem id="menu_esg_dashboard"
+              name="Dashboard"
+              parent="menu_esg_root"
+              sequence="5"
+              groups="esg_management.group_esg_user"/>
+    <menuitem id="menu_esg_overview"
+              name="ESG Overview"
+              parent="menu_esg_dashboard"
+              sequence="10"
+              action="esg_management.action_esg_dashboard_client"
+              groups="esg_management.group_esg_user"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_esg_configuration"
+              name="Configuration"
+              parent="menu_esg_root"
+              sequence="100"
+              groups="esg_management.group_esg_manager"/>
+    <menuitem id="menu_esg_categories"
+              name="Categories"
+              parent="menu_esg_configuration"
+              sequence="10"
+              action="esg_management.action_esg_category"
+              groups="esg_management.group_esg_manager"/>
+    <menuitem id="menu_esg_department_scores"
+              name="Department Scores"
+              parent="menu_esg_configuration"
+              sequence="20"
+              action="esg_management.action_esg_department_score"
+              groups="esg_management.group_esg_manager"/>
+    <menuitem id="menu_esg_settings"
+              name="Settings"
+              parent="menu_esg_configuration"
+              sequence="30"
+              action="base_setup.action_general_configuration"
+              groups="esg_management.group_esg_manager"/>
+</odoo>

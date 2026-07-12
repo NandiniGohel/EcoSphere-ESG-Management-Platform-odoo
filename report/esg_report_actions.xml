@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_esg_summary" model="ir.actions.report">
+        <field name="name">ESG Summary Report</field>
+        <field name="model">esg.report.builder</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">esg_management.report_esg_summary_template</field>
+        <field name="report_file">esg_management.report_esg_summary_template</field>
+        <field name="binding_model_id" ref="model_esg_report_builder"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_esg_environmental" model="ir.actions.report">
+        <field name="name">ESG Environmental Report</field>
+        <field name="model">esg.report.builder</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">esg_management.report_esg_environmental_template</field>
+        <field name="report_file">esg_management.report_esg_environmental_template</field>
+        <field name="binding_model_id" ref="model_esg_report_builder"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_esg_social" model="ir.actions.report">
+        <field name="name">ESG Social Report</field>
+        <field name="model">esg.report.builder</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">esg_management.report_esg_social_template</field>
+        <field name="report_file">esg_management.report_esg_social_template</field>
+        <field name="binding_model_id" ref="model_esg_report_builder"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_esg_governance" model="ir.actions.report">
+        <field name="name">ESG Governance Report</field>
+        <field name="model">esg.report.builder</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">esg_management.report_esg_governance_template</field>
+        <field name="report_file">esg_management.report_esg_governance_template</field>
+        <field name="binding_model_id" ref="model_esg_report_builder"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

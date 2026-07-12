@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_esg_challenge_tree" model="ir.ui.view">
+        <field name="name">esg.challenge.tree</field>
+        <field name="model">esg.challenge</field>
+        <field name="arch" type="xml">
+            <list string="Challenges"
+                  decoration-success="state == 'completed'"
+                  decoration-info="state == 'active'">
+                <field name="name"/>
+                <field name="challenge_type"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'active'"
+                       decoration-muted="state == 'completed'"
+                       decoration-danger="state == 'cancelled'"/>
+                <field name="xp_reward"/>
+                <field name="participant_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_esg_challenge_kanban" model="ir.ui.view">
+        <field name="name">esg.challenge.kanban</field>
+        <field name="model">esg.challenge</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="challenge_type"/>
+                <field name="xp_reward"/>
+                <field name="participant_count"/>
+                <field name="completion_count"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-card">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary"><field name="name"/></div>
+                                    <div class="o_secondary">
+                                        <field name="challenge_type" widget="badge"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_content">
+                                <div class="o_kanban_record_bottom">
+                                    <span>⭐ <t t-esc="record.xp_reward.raw_value"/> XP</span>
+                                    <span>👥 <t t-esc="record.participant_count.raw_value"/> participants</span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_esg_challenge_form" model="ir.ui.view">
+        <field name="name">esg.challenge.form</field>
+        <field name="model">esg.challenge</field>
+        <field name="arch" type="xml">
+            <form string="ESG Challenge">
+                <header>
+                    <button name="action_activate" string="Activate" type="object"
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_complete" string="Complete" type="object"
+                            invisible="state != 'active'" class="btn-success"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state not in ('draft', 'active')" class="btn-danger"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_participants" type="object"
+                                class="oe_stat_button" icon="fa-users">
+                            <field name="participant_count" widget="statinfo"
+                                   string="Participants"/>
+                        </button>
+                        <button name="action_view_completions" type="object"
+                                class="oe_stat_button" icon="fa-trophy">
+                            <field name="completion_count" widget="statinfo"
+                                   string="Completed"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Challenge Details">
+                            <field name="challenge_type"/>
+                            <field name="category_id"/>
+                            <field name="created_by_id"/>
+                            <field name="evidence_required"/>
+                        </group>
+                        <group string="Schedule &amp; Rewards">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="xp_reward"/>
+                            <field name="badge_id"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1" widget="html"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_esg_challenge_search" model="ir.ui.view">
+        <field name="name">esg.challenge.search</field>
+        <field name="model">esg.challenge</field>
+        <field name="arch" type="xml">
+            <search string="Search Challenges">
+                <field name="name"/>
+                <field name="challenge_type"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Active" name="active" domain="[('state', '=', 'active')]"/>
+                <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'challenge_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_esg_challenge" model="ir.actions.act_window">
+        <field name="name">Challenges</field>
+        <field name="res_model">esg.challenge</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_esg_challenge_search"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>

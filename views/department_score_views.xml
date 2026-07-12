@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_esg_department_score_tree" model="ir.ui.view">
+        <field name="name">esg.department.score.tree</field>
+        <field name="model">esg.department.score</field>
+        <field name="arch" type="xml">
+            <list string="Department Scores">
+                <field name="department_id"/>
+                <field name="period"/>
+                <field name="environmental_score"
+                       decoration-success="environmental_score &gt;= 70"
+                       decoration-warning="environmental_score &gt;= 40 and environmental_score &lt; 70"
+                       decoration-danger="environmental_score &lt; 40"/>
+                <field name="social_score"
+                       decoration-success="social_score &gt;= 70"
+                       decoration-warning="social_score &gt;= 40 and social_score &lt; 70"
+                       decoration-danger="social_score &lt; 40"/>
+                <field name="governance_score"
+                       decoration-success="governance_score &gt;= 70"
+                       decoration-warning="governance_score &gt;= 40 and governance_score &lt; 70"
+                       decoration-danger="governance_score &lt; 40"/>
+                <field name="total_score"
+                       decoration-success="total_score &gt;= 70"
+                       decoration-warning="total_score &gt;= 40 and total_score &lt; 70"
+                       decoration-danger="total_score &lt; 40"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Graph View: line chart of total_score over time -->
+    <record id="view_esg_department_score_graph" model="ir.ui.view">
+        <field name="name">esg.department.score.graph</field>
+        <field name="model">esg.department.score</field>
+        <field name="arch" type="xml">
+            <graph string="Department Scores Over Time" type="line">
+                <field name="period" type="row"/>
+                <field name="total_score" type="measure"/>
+                <field name="department_id" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Pivot View -->
+    <record id="view_esg_department_score_pivot" model="ir.ui.view">
+        <field name="name">esg.department.score.pivot</field>
+        <field name="model">esg.department.score</field>
+        <field name="arch" type="xml">
+            <pivot string="Department Scores">
+                <field name="department_id" type="row"/>
+                <field name="period" type="col"/>
+                <field name="environmental_score" type="measure"/>
+                <field name="social_score" type="measure"/>
+                <field name="governance_score" type="measure"/>
+                <field name="total_score" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_esg_department_score_search" model="ir.ui.view">
+        <field name="name">esg.department.score.search</field>
+        <field name="model">esg.department.score</field>
+        <field name="arch" type="xml">
+            <search string="Search Department Scores">
+                <field name="department_id"/>
+                <field name="period"/>
+                <group expand="0" string="Group By">
+                    <filter string="Department" name="group_dept" context="{'group_by': 'department_id'}"/>
+                    <filter string="Period" name="group_period" context="{'group_by': 'period'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_esg_department_score" model="ir.actions.act_window">
+        <field name="name">Department Scores</field>
+        <field name="res_model">esg.department.score</field>
+        <field name="view_mode">list,graph,pivot</field>
+        <field name="search_view_id" ref="view_esg_department_score_search"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>

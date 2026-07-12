@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="esg_management.EsgDashboard">
+        <div class="esg-dashboard o_action">
+            <t t-if="state.loading">
+                <div class="esg-loading">
+                    <div class="spinner"/>
+                    <p>Loading ESG Data...</p>
+                </div>
+            </t>
+            <t t-else="">
+                <!-- Header -->
+                <div class="esg-header">
+                    <h1>&#127757; ESG Dashboard</h1>
+                    <p class="esg-subtitle">EcoSphere Environmental, Social &amp; Governance Overview</p>
+                </div>
+
+                <!-- KPI Cards Row -->
+                <div class="esg-kpi-row">
+                    <div class="esg-kpi-card environmental">
+                        <div class="kpi-icon">&#127807;</div>
+                        <div class="kpi-value"><t t-esc="safeFixed(state.totalCO2, 1)"/> t</div>
+                        <div class="kpi-label">Total CO&#8322;e Used</div>
+                    </div>
+                    <div class="esg-kpi-card social">
+                        <div class="kpi-icon">&#129309;</div>
+                        <div class="kpi-value"><t t-esc="state.departments.length"/></div>
+                        <div class="kpi-label">Active Departments</div>
+                    </div>
+                    <div class="esg-kpi-card governance">
+                        <div class="kpi-icon">&#11088;</div>
+                        <div class="kpi-value"><t t-esc="state.totalXP"/></div>
+                        <div class="kpi-label">Total XP Earned</div>
+                    </div>
+                </div>
+
+                <!-- Department Scores -->
+                <div class="esg-section">
+                    <h2>Department ESG Scores</h2>
+                    <div class="esg-dept-grid">
+                        <t t-foreach="state.departments" t-as="dept" t-key="dept.id">
+                            <div class="esg-dept-card" t-att-class="getScoreClass(dept.total_score)">
+                                <div class="dept-name"><t t-esc="dept.name"/></div>
+                                <div class="dept-total-score"><t t-esc="safeFixed(dept.total_score)"/></div>
+                                <div class="dept-pillars">
+                                    <div class="pillar">
+                                        <span class="pillar-label">E</span>
+                                        <div class="pillar-bar">
+                                            <div class="pillar-fill env"
+                                                 t-att-style="'width:' + Math.min(dept.environmental_score || 0, 100) + '%'"/>
+                                        </div>
+                                        <span class="pillar-value"><t t-esc="safeFixed(dept.environmental_score, 0)"/></span>
+                                    </div>
+                                    <div class="pillar">
+                                        <span class="pillar-label">S</span>
+                                        <div class="pillar-bar">
+                                            <div class="pillar-fill soc"
+                                                 t-att-style="'width:' + Math.min(dept.social_score || 0, 100) + '%'"/>
+                                        </div>
+                                        <span class="pillar-value"><t t-esc="safeFixed(dept.social_score, 0)"/></span>
+                                    </div>
+                                    <div class="pillar">
+                                        <span class="pillar-label">G</span>
+                                        <div class="pillar-bar">
+                                            <div class="pillar-fill gov"
+                                                 t-att-style="'width:' + Math.min(dept.governance_score || 0, 100) + '%'"/>
+                                        </div>
+                                        <span class="pillar-value"><t t-esc="safeFixed(dept.governance_score, 0)"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Recent XP Activity -->
+                <div class="esg-section">
+                    <h2>Recent XP Activity</h2>
+                    <table class="esg-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Type</th>
+                                <th>XP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.recentTransactions" t-as="tx" t-key="tx.id">
+                                <tr>
+                                    <td><t t-esc="Array.isArray(tx.employee_id) ? tx.employee_id[1] : 'N/A'"/></td>
+                                    <td><t t-esc="tx.transaction_type"/></td>
+                                    <td t-att-class="tx.xp_amount >= 0 ? 'xp-positive' : 'xp-negative'">
+                                        <t t-esc="(tx.xp_amount >= 0 ? '+' : '') + tx.xp_amount"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

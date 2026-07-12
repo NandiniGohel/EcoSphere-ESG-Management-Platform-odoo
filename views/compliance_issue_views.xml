@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_esg_compliance_issue_tree" model="ir.ui.view">
+        <field name="name">esg.compliance.issue.tree</field>
+        <field name="model">esg.compliance.issue</field>
+        <field name="arch" type="xml">
+            <list string="Compliance Issues"
+                  decoration-danger="is_overdue and state not in ('resolved', 'closed')"
+                  decoration-success="state == 'resolved'"
+                  decoration-muted="state == 'closed'">
+                <field name="name"/>
+                <field name="audit_id"/>
+                <field name="department_id"/>
+                <field name="severity" widget="badge"
+                       decoration-danger="severity == 'critical'"
+                       decoration-warning="severity == 'major'"
+                       decoration-info="severity == 'minor'"/>
+                <field name="state" widget="badge"
+                       decoration-danger="state == 'open'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-success="state == 'resolved'"
+                       decoration-muted="state == 'closed'"/>
+                <field name="responsible_id"/>
+                <field name="due_date"/>
+                <field name="is_overdue" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_esg_compliance_issue_kanban" model="ir.ui.view">
+        <field name="name">esg.compliance.issue.kanban</field>
+        <field name="model">esg.compliance.issue</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="severity" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="severity"/>
+                <field name="state"/>
+                <field name="responsible_id"/>
+                <field name="due_date"/>
+                <field name="is_overdue"/>
+                <templates>
+                    <t t-name="kanban-card">
+                        <div t-att-class="'oe_kanban_card oe_kanban_global_click ' + (record.is_overdue.raw_value ? 'border-danger' : '')">
+                            <div class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary"><field name="name"/></div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_content">
+                                <div class="o_kanban_record_bottom">
+                                    <field name="state" widget="badge"/>
+                                    <span><t t-esc="record.responsible_id.value"/></span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_esg_compliance_issue_form" model="ir.ui.view">
+        <field name="name">esg.compliance.issue.form</field>
+        <field name="model">esg.compliance.issue</field>
+        <field name="arch" type="xml">
+            <form string="Compliance Issue">
+                <header>
+                    <button name="action_start" string="Start Resolution" type="object"
+                            invisible="state != 'open'" class="btn-primary"/>
+                    <button name="action_resolve" string="Resolve" type="object"
+                            invisible="state not in ('open', 'in_progress')" class="btn-success"/>
+                    <button name="action_close" string="Close" type="object"
+                            invisible="state != 'resolved'" class="btn-secondary"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="open,in_progress,resolved,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Issue Details">
+                            <field name="audit_id"/>
+                            <field name="department_id"/>
+                            <field name="severity"/>
+                            <field name="responsible_id"/>
+                            <field name="due_date"/>
+                        </group>
+                        <group string="Resolution">
+                            <field name="resolution_description"/>
+                            <field name="resolved_date"/>
+                            <field name="resolved_by_id"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1" widget="html"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_esg_compliance_issue_search" model="ir.ui.view">
+        <field name="name">esg.compliance.issue.search</field>
+        <field name="model">esg.compliance.issue</field>
+        <field name="arch" type="xml">
+            <search string="Search Compliance Issues">
+                <field name="name"/>
+                <field name="responsible_id"/>
+                <field name="department_id"/>
+                <separator/>
+                <filter string="Open" name="open" domain="[('state', '=', 'open')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Resolved" name="resolved" domain="[('state', '=', 'resolved')]"/>
+                <separator/>
+                <filter string="Critical" name="critical" domain="[('severity', '=', 'critical')]"/>
+                <filter string="Overdue" name="overdue" domain="[('is_overdue', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Severity" name="group_sev" context="{'group_by': 'severity'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Department" name="group_dept" context="{'group_by': 'department_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_esg_compliance_issue" model="ir.actions.act_window">
+        <field name="name">Compliance Issues</field>
+        <field name="res_model">esg.compliance.issue</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_esg_compliance_issue_search"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>

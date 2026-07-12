@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ESG Badge List View -->
+    <record id="view_esg_badge_tree" model="ir.ui.view">
+        <field name="name">esg.badge.tree</field>
+        <field name="model">esg.badge</field>
+        <field name="arch" type="xml">
+            <list string="ESG Badges">
+                <field name="image_64" widget="image" options="{&quot;size&quot;: [32, 32]}"/>
+                <field name="name"/>
+                <field name="badge_type"/>
+                <field name="xp_threshold"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ESG Badge Form View -->
+    <record id="view_esg_badge_form" model="ir.ui.view">
+        <field name="name">esg.badge.form</field>
+        <field name="model">esg.badge</field>
+        <field name="arch" type="xml">
+            <form string="ESG Badge">
+                <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Badge Details">
+                            <field name="badge_type"/>
+                            <field name="xp_threshold"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Appearance">
+                            <field name="color"/>
+                            <field name="icon"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ESG Badge Search -->
+    <record id="view_esg_badge_search" model="ir.ui.view">
+        <field name="name">esg.badge.search</field>
+        <field name="model">esg.badge</field>
+        <field name="arch" type="xml">
+            <search string="Search Badges">
+                <field name="name"/>
+                <field name="badge_type"/>
+                <separator/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Badge Type" name="group_type" context="{'group_by': 'badge_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ESG Badge Action -->
+    <record id="action_esg_badge" model="ir.actions.act_window">
+        <field name="name">ESG Badges</field>
+        <field name="res_model">esg.badge</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_esg_badge_search"/>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Employee Badge List View -->
+    <record id="view_esg_employee_badge_tree" model="ir.ui.view">
+        <field name="name">esg.employee.badge.tree</field>
+        <field name="model">esg.employee.badge</field>
+        <field name="arch" type="xml">
+            <list string="Employee Badges">
+                <field name="employee_id"/>
+                <field name="badge_id"/>
+                <field name="awarded_date"/>
+                <field name="awarded_by_id"/>
+                <field name="award_reason"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Employee Badge Form View -->
+    <record id="view_esg_employee_badge_form" model="ir.ui.view">
+        <field name="name">esg.employee.badge.form</field>
+        <field name="model">esg.employee.badge</field>
+        <field name="arch" type="xml">
+            <form string="Employee Badge">
+                <sheet>
+                    <group>
+                        <group string="Employee">
+                            <field name="employee_id"/>
+                        </group>
+                        <group string="Badge">
+                            <field name="badge_id"/>
+                            <field name="awarded_date"/>
+                            <field name="awarded_by_id"/>
+                        </group>
+                    </group>
+                    <group string="Award Reason">
+                        <field name="award_reason" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Employee Badge Search -->
+    <record id="view_esg_employee_badge_search" model="ir.ui.view">
+        <field name="name">esg.employee.badge.search</field>
+        <field name="model">esg.employee.badge</field>
+        <field name="arch" type="xml">
+            <search string="Search Employee Badges">
+                <field name="employee_id"/>
+                <field name="badge_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Employee" name="group_emp" context="{'group_by': 'employee_id'}"/>
+                    <filter string="Badge" name="group_badge" context="{'group_by': 'badge_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Employee Badge Action -->
+    <record id="action_esg_employee_badge" model="ir.actions.act_window">
+        <field name="name">Employee Badges</field>
+        <field name="res_model">esg.employee.badge</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_esg_employee_badge_search"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_esg_audit_tree" model="ir.ui.view">
+        <field name="name">esg.audit.tree</field>
+        <field name="model">esg.audit</field>
+        <field name="arch" type="xml">
+            <list string="Audits"
+                  decoration-success="state == 'completed'"
+                  decoration-info="state == 'in_progress'">
+                <field name="name"/>
+                <field name="audit_type"/>
+                <field name="auditor_id"/>
+                <field name="department_id"/>
+                <field name="audit_date"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'planned'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-success="state == 'completed'"
+                       decoration-danger="state == 'cancelled'"/>
+                <field name="overall_score"/>
+                <field name="issue_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_esg_audit_form" model="ir.ui.view">
+        <field name="name">esg.audit.form</field>
+        <field name="model">esg.audit</field>
+        <field name="arch" type="xml">
+            <form string="ESG Audit">
+                <header>
+                    <button name="action_start" string="Start Audit" type="object"
+                            invisible="state != 'planned'" class="btn-primary"/>
+                    <button name="action_complete" string="Complete" type="object"
+                            invisible="state != 'in_progress'" class="btn-success"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('completed', 'cancelled')" class="btn-danger"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="planned,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_issues" type="object"
+                                class="oe_stat_button" icon="fa-exclamation-triangle">
+                            <field name="issue_count" widget="statinfo"
+                                   string="Issues"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Audit Details">
+                            <field name="audit_type"/>
+                            <field name="auditor_id"/>
+                            <field name="department_id"/>
+                            <field name="audit_date"/>
+                        </group>
+                        <group string="Results">
+                            <field name="overall_score"/>
+                            <field name="environmental_score"/>
+                            <field name="social_score"/>
+                            <field name="governance_score"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Summary">
+                            <field name="summary" widget="html" nolabel="1"/>
+                        </page>
+                        <page string="Compliance Issues" name="issues">
+                            <field name="compliance_issue_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="severity" widget="badge"
+                                           decoration-danger="severity == 'critical'"
+                                           decoration-warning="severity == 'major'"
+                                           decoration-info="severity == 'minor'"/>
+                                    <field name="state"/>
+                                    <field name="due_date"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Recommendations">
+                            <field name="recommendations" widget="html" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_esg_audit_search" model="ir.ui.view">
+        <field name="name">esg.audit.search</field>
+        <field name="model">esg.audit</field>
+        <field name="arch" type="xml">
+            <search string="Search Audits">
+                <field name="name"/>
+                <field name="auditor_id"/>
+                <field name="department_id"/>
+                <separator/>
+                <filter string="Planned" name="planned" domain="[('state', '=', 'planned')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Audit Type" name="group_type" context="{'group_by': 'audit_type'}"/>
+                    <filter string="Department" name="group_dept" context="{'group_by': 'department_id'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_esg_audit" model="ir.actions.act_window">
+        <field name="name">Audits</field>
+        <field name="res_model">esg.audit</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_esg_audit_search"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_esg_challenge_participation_tree" model="ir.ui.view">
+        <field name="name">esg.challenge.participation.tree</field>
+        <field name="model">esg.challenge.participation</field>
+        <field name="arch" type="xml">
+            <list string="Challenge Participations"
+                  decoration-success="status == 'completed'"
+                  decoration-info="status == 'in_progress'">
+                <field name="employee_id"/>
+                <field name="challenge_id"/>
+                <field name="enroll_date"/>
+                <field name="status" widget="badge"
+                       decoration-info="status == 'enrolled'"
+                       decoration-warning="status == 'in_progress'"
+                       decoration-success="status == 'completed'"
+                       decoration-danger="status == 'failed'"/>
+                <field name="completion_date"/>
+                <field name="xp_earned"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_esg_challenge_participation_form" model="ir.ui.view">
+        <field name="name">esg.challenge.participation.form</field>
+        <field name="model">esg.challenge.participation</field>
+        <field name="arch" type="xml">
+            <form string="Challenge Participation">
+                <header>
+                    <button name="action_start" string="Start" type="object"
+                            invisible="status != 'enrolled'" class="btn-primary"/>
+                    <button name="action_complete" string="Complete" type="object"
+                            invisible="status not in ('enrolled', 'in_progress')" class="btn-success"/>
+                    <button name="action_fail" string="Mark Failed" type="object"
+                            invisible="status not in ('enrolled', 'in_progress')" class="btn-danger"/>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="enrolled,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Participant">
+                            <field name="employee_id"/>
+                            <field name="challenge_id"/>
+                            <field name="enroll_date"/>
+                        </group>
+                        <group string="Progress">
+                            <field name="status"/>
+                            <field name="completion_date"/>
+                            <field name="xp_earned"/>
+                            <field name="badge_awarded"/>
+                        </group>
+                    </group>
+                    <group string="Evidence">
+                        <field name="evidence_description"/>
+                        <field name="evidence_attachment_ids" widget="many2many_binary"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_esg_challenge_participation_search" model="ir.ui.view">
+        <field name="name">esg.challenge.participation.search</field>
+        <field name="model">esg.challenge.participation</field>
+        <field name="arch" type="xml">
+            <search string="Search Challenge Participations">
+                <field name="employee_id"/>
+                <field name="challenge_id"/>
+                <separator/>
+                <filter string="Enrolled" name="enrolled" domain="[('status', '=', 'enrolled')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('status', '=', 'in_progress')]"/>
+                <filter string="Completed" name="completed" domain="[('status', '=', 'completed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Employee" name="group_emp" context="{'group_by': 'employee_id'}"/>
+                    <filter string="Challenge" name="group_chal" context="{'group_by': 'challenge_id'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_esg_challenge_participation" model="ir.actions.act_window">
+        <field name="name">Challenge Participation</field>
+        <field name="res_model">esg.challenge.participation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_esg_challenge_participation_search"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>

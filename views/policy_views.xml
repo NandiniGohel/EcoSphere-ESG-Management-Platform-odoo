@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_esg_policy_tree" model="ir.ui.view">
+        <field name="name">esg.policy.tree</field>
+        <field name="model">esg.policy</field>
+        <field name="arch" type="xml">
+            <list string="Policies"
+                  decoration-success="state == 'active'"
+                  decoration-muted="state == 'archived'">
+                <field name="name"/>
+                <field name="category"/>
+                <field name="version"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'draft'"
+                       decoration-muted="state == 'archived'"/>
+                <field name="effective_date"/>
+                <field name="review_date"
+                       decoration-danger="review_date &lt; current_date and state == 'active'"/>
+                <field name="responsible_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_esg_policy_form" model="ir.ui.view">
+        <field name="name">esg.policy.form</field>
+        <field name="model">esg.policy</field>
+        <field name="arch" type="xml">
+            <form string="ESG Policy">
+                <header>
+                    <button name="action_activate" string="Activate" type="object"
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_review" string="Send for Review" type="object"
+                            invisible="state != 'active'" class="btn-warning"/>
+                    <button name="action_archive" string="Archive" type="object"
+                            invisible="state not in ('active', 'draft')" class="btn-secondary"/>
+                    <button name="action_reset_draft" string="Reset to Draft" type="object"
+                            invisible="state != 'archived'" class="btn-secondary"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,archived"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_acknowledgements" type="object"
+                                class="oe_stat_button" icon="fa-check-circle">
+                            <field name="acknowledgement_count" widget="statinfo"
+                                   string="Acknowledged"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Policy Details">
+                            <field name="category"/>
+                            <field name="version"/>
+                            <field name="responsible_id"/>
+                            <field name="department_id"/>
+                        </group>
+                        <group string="Dates">
+                            <field name="effective_date"/>
+                            <field name="review_date"/>
+                            <field name="expiry_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Content">
+                            <field name="content" nolabel="1"
+                                   widget="html"/>
+                        </page>
+                        <page string="Applicability">
+                            <group>
+                                <field name="applies_to_all"/>
+                                <field name="applicable_department_ids"
+                                       invisible="applies_to_all"
+                                       widget="many2many_tags"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_esg_policy_search" model="ir.ui.view">
+        <field name="name">esg.policy.search</field>
+        <field name="model">esg.policy</field>
+        <field name="arch" type="xml">
+            <search string="Search Policies">
+                <field name="name"/>
+                <field name="category"/>
+                <field name="responsible_id"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Active" name="active" domain="[('state', '=', 'active')]"/>
+                <filter string="Archived" name="archived" domain="[('state', '=', 'archived')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="group_cat" context="{'group_by': 'category'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Responsible" name="group_resp" context="{'group_by': 'responsible_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_esg_policy" model="ir.actions.act_window">
+        <field name="name">Policies</field>
+        <field name="res_model">esg.policy</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_esg_policy_search"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>

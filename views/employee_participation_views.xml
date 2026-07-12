@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_esg_employee_participation_tree" model="ir.ui.view">
+        <field name="name">esg.employee.participation.tree</field>
+        <field name="model">esg.employee.participation</field>
+        <field name="arch" type="xml">
+            <list string="Employee Participations"
+                  decoration-success="approval_status == 'approved'"
+                  decoration-danger="approval_status == 'rejected'"
+                  decoration-warning="approval_status == 'pending'">
+                <field name="employee_id"/>
+                <field name="activity_id"/>
+                <field name="department_id"/>
+                <field name="join_date"/>
+                <field name="approval_status" widget="badge"
+                       decoration-success="approval_status == 'approved'"
+                       decoration-warning="approval_status == 'pending'"
+                       decoration-danger="approval_status == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_esg_employee_participation_form" model="ir.ui.view">
+        <field name="name">esg.employee.participation.form</field>
+        <field name="model">esg.employee.participation</field>
+        <field name="arch" type="xml">
+            <form string="Employee Participation">
+                <header>
+                    <button name="action_approve" string="Approve" type="object"
+                            invisible="approval_status != 'pending'"
+                            class="btn-success"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            invisible="approval_status != 'pending'"
+                            class="btn-danger"/>
+                    <field name="approval_status" widget="statusbar"
+                           statusbar_visible="pending,approved,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Participant">
+                            <field name="employee_id"/>
+                            <field name="department_id"/>
+                        </group>
+                        <group string="Activity">
+                            <field name="activity_id"/>
+                            <field name="join_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Evidence">
+                            <field name="evidence_description"/>
+                            <field name="evidence_attachment_ids" widget="many2many_binary"/>
+                        </group>
+                        <group string="XP &amp; Approval">
+                            <field name="xp_awarded"/>
+                            <field name="approved_by_id"/>
+                            <field name="approval_date"/>
+                            <field name="rejection_reason"
+                                   invisible="approval_status != 'rejected'"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_esg_employee_participation_search" model="ir.ui.view">
+        <field name="name">esg.employee.participation.search</field>
+        <field name="model">esg.employee.participation</field>
+        <field name="arch" type="xml">
+            <search string="Search Participations">
+                <field name="employee_id"/>
+                <field name="activity_id"/>
+                <field name="department_id"/>
+                <separator/>
+                <filter string="Pending" name="pending" domain="[('approval_status', '=', 'pending')]"/>
+                <filter string="Approved" name="approved" domain="[('approval_status', '=', 'approved')]"/>
+                <filter string="Rejected" name="rejected" domain="[('approval_status', '=', 'rejected')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Employee" name="group_emp" context="{'group_by': 'employee_id'}"/>
+                    <filter string="Activity" name="group_act" context="{'group_by': 'activity_id'}"/>
+                    <filter string="Department" name="group_dept" context="{'group_by': 'department_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_esg_employee_participation" model="ir.actions.act_window">
+        <field name="name">Employee Participation</field>
+        <field name="res_model">esg.employee.participation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_esg_employee_participation_search"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>

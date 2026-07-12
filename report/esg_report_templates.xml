@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Template 1: ESG Summary Report -->
+    <template id="report_esg_summary_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <style>
+                        .esg-report { font-family: Arial, sans-serif; color: #1a1a2e; }
+                        .esg-report-header { background: linear-gradient(135deg, #0f3460, #16213e); color: white; padding: 30px; margin-bottom: 30px; border-radius: 8px; }
+                        .esg-report-header h1 { margin: 0; font-size: 28px; letter-spacing: 1px; }
+                        .esg-report-header p { margin: 8px 0 0; opacity: 0.8; }
+                        .esg-meta { display: flex; gap: 20px; margin: 15px 0; font-size: 13px; }
+                        .esg-meta span { background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; }
+                        .esg-section { margin-bottom: 30px; }
+                        .esg-section h2 { color: #0f3460; border-bottom: 2px solid #0f3460; padding-bottom: 8px; font-size: 18px; }
+                        table.esg-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+                        table.esg-table th { background: #0f3460; color: white; padding: 10px 14px; text-align: left; }
+                        table.esg-table td { padding: 8px 14px; border-bottom: 1px solid #e8e8e8; }
+                        table.esg-table tr:nth-child(even) td { background: #f8f9fa; }
+                        .score-good { color: #059669; font-weight: bold; }
+                        .score-medium { color: #d97706; font-weight: bold; }
+                        .score-poor { color: #dc2626; font-weight: bold; }
+                        .kpi-row { display: flex; gap: 16px; margin: 20px 0; }
+                        .kpi-card { flex: 1; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; text-align: center; }
+                        .kpi-card .kpi-val { font-size: 28px; font-weight: 700; color: #0f3460; }
+                        .kpi-card .kpi-lbl { font-size: 12px; color: #666; margin-top: 4px; }
+                        .note-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 4px; font-size: 13px; color: #1e40af; }
+                        .pillar-env { color: #059669; } .pillar-soc { color: #3b82f6; } .pillar-gov { color: #7c3aed; }
+                    </style>
+                    <div class="esg-report">
+                        <div class="esg-report-header">
+                            <h1>🌍 EcoSphere ESG Summary Report</h1>
+                            <div class="esg-meta">
+                                <span>Generated: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d %b %Y %H:%M')"/></span>
+                                <span t-if="doc.date_from">From: <t t-esc="doc.date_from"/></span>
+                                <span t-if="doc.date_to">To: <t t-esc="doc.date_to"/></span>
+                            </div>
+                        </div>
+
+                        <!-- Department Scores Section -->
+                        <div class="esg-section">
+                            <h2>Department ESG Scores</h2>
+                            <table class="esg-table">
+                                <thead>
+                                    <tr>
+                                        <th>Department</th>
+                                        <th>Environmental</th>
+                                        <th>Social</th>
+                                        <th>Governance</th>
+                                        <th>Total Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="departments" t-as="dept">
+                                        <tr>
+                                            <td><strong><t t-esc="dept.name"/></strong></td>
+                                            <td t-att-class="'pillar-env ' + ('score-good' if dept.environmental_score >= 70 else 'score-medium' if dept.environmental_score >= 40 else 'score-poor')">
+                                                <t t-esc="'%.1f' % dept.environmental_score"/>%
+                                            </td>
+                                            <td t-att-class="'pillar-soc ' + ('score-good' if dept.social_score >= 70 else 'score-medium' if dept.social_score >= 40 else 'score-poor')">
+                                                <t t-esc="'%.1f' % dept.social_score"/>%
+                                            </td>
+                                            <td t-att-class="'pillar-gov ' + ('score-good' if dept.governance_score >= 70 else 'score-medium' if dept.governance_score >= 40 else 'score-poor')">
+                                                <t t-esc="'%.1f' % dept.governance_score"/>%
+                                            </td>
+                                            <td t-att-class="'score-good' if dept.total_score >= 70 else 'score-medium' if dept.total_score >= 40 else 'score-poor'">
+                                                <strong><t t-esc="'%.1f' % dept.total_score"/>%</strong>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- CO2e Summary -->
+                        <div class="esg-section">
+                            <h2>Carbon Emissions Summary</h2>
+                            <table class="esg-table">
+                                <thead>
+                                    <tr>
+                                        <th>Department</th>
+                                        <th>Carbon Budget (t)</th>
+                                        <th>Carbon Used (t)</th>
+                                        <th>Remaining (t)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="departments" t-as="dept">
+                                        <tr>
+                                            <td><t t-esc="dept.name"/></td>
+                                            <td><t t-esc="'%.2f' % (dept.carbon_budget or 0)"/></td>
+                                            <td><t t-esc="'%.2f' % (dept.carbon_used or 0)"/></td>
+                                            <td t-att-class="'score-poor' if (dept.carbon_remaining or 0) &lt; 0 else 'score-good'">
+                                                <t t-esc="'%.2f' % (dept.carbon_remaining or 0)"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Charts note -->
+                        <div class="note-box">
+                            📊 <strong>Interactive Charts:</strong> See the digital ESG Dashboard for real-time interactive charts, trend analysis, and drill-down capabilities. Navigate to ESG Management &gt; Dashboard &gt; ESG Overview.
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Template 2: Environmental Detail Report -->
+    <template id="report_esg_environmental_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <style>
+                        .esg-report { font-family: Arial, sans-serif; color: #1a1a2e; }
+                        .esg-report-header { background: linear-gradient(135deg, #065f46, #059669); color: white; padding: 30px; margin-bottom: 30px; border-radius: 8px; }
+                        .esg-report-header h1 { margin: 0; font-size: 26px; }
+                        .esg-report-header p { margin: 8px 0 0; opacity: 0.85; }
+                        .esg-section { margin-bottom: 30px; }
+                        .esg-section h2 { color: #065f46; border-bottom: 2px solid #059669; padding-bottom: 8px; font-size: 18px; }
+                        .esg-section h3 { color: #047857; font-size: 15px; margin: 20px 0 8px; }
+                        table.esg-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+                        table.esg-table th { background: #065f46; color: white; padding: 10px 14px; text-align: left; }
+                        table.esg-table td { padding: 8px 14px; border-bottom: 1px solid #e8e8e8; }
+                        table.esg-table tr:nth-child(even) td { background: #f0fdf4; }
+                        .scope-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+                        .scope1 { background: #fef3c7; color: #92400e; }
+                        .scope2 { background: #dbeafe; color: #1e40af; }
+                        .scope3 { background: #ede9fe; color: #5b21b6; }
+                        .progress-bar-wrap { background: #e5e7eb; border-radius: 4px; height: 8px; width: 100px; display: inline-block; vertical-align: middle; }
+                        .progress-bar-fill { background: #059669; height: 100%; border-radius: 4px; }
+                        .summary-box { background: #ecfdf5; border: 1px solid #6ee7b7; border-radius: 8px; padding: 16px; margin: 16px 0; }
+                        .summary-box table { width: 100%; }
+                        .summary-box td { padding: 6px 10px; font-size: 14px; }
+                        .co2-total { font-size: 20px; font-weight: 700; color: #065f46; }
+                    </style>
+                    <div class="esg-report">
+                        <div class="esg-report-header">
+                            <h1>🌿 Environmental Report</h1>
+                            <p>Carbon Emissions &amp; Environmental Goals Detail</p>
+                        </div>
+
+                        <!-- Scope breakdown summary -->
+                        <div class="esg-section">
+                            <h2>Scope 1 / 2 / 3 Breakdown</h2>
+                            <div class="summary-box">
+                                <table>
+                                    <tr>
+                                        <td><span class="scope-badge scope1">Scope 1</span> Direct Emissions</td>
+                                        <td class="co2-total"><t t-esc="'%.2f' % scope1_total"/> t CO₂e</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="scope-badge scope2">Scope 2</span> Indirect (Energy)</td>
+                                        <td class="co2-total"><t t-esc="'%.2f' % scope2_total"/> t CO₂e</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="scope-badge scope3">Scope 3</span> Value Chain</td>
+                                        <td class="co2-total"><t t-esc="'%.2f' % scope3_total"/> t CO₂e</td>
+                                    </tr>
+                                    <tr style="border-top: 2px solid #6ee7b7;">
+                                        <td><strong>Total</strong></td>
+                                        <td class="co2-total"><t t-esc="'%.2f' % (scope1_total + scope2_total + scope3_total)"/> t CO₂e</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Carbon Transactions grouped by scope -->
+                        <div class="esg-section">
+                            <h2>Carbon Transactions</h2>
+                            <t t-foreach="['scope1', 'scope2', 'scope3']" t-as="scope">
+                                <h3>
+                                    <span t-att-class="'scope-badge ' + scope">
+                                        <t t-esc="scope.upper().replace('SCOPE', 'Scope ')"/>
+                                    </span>
+                                    Transactions
+                                </h3>
+                                <table class="esg-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Reference</th>
+                                            <th>Date</th>
+                                            <th>Department</th>
+                                            <th>Emission Factor</th>
+                                            <th>Quantity</th>
+                                            <th>CO₂e (kg)</th>
+                                            <th>CO₂e (t)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="carbon_transactions.filtered(lambda r: r.scope == scope)" t-as="tx">
+                                            <tr>
+                                                <td><t t-esc="tx.name"/></td>
+                                                <td><t t-esc="tx.date"/></td>
+                                                <td><t t-esc="tx.department_id.name"/></td>
+                                                <td><t t-esc="tx.emission_factor_id.name"/></td>
+                                                <td><t t-esc="'%.2f' % tx.quantity"/> <t t-esc="tx.unit"/></td>
+                                                <td><t t-esc="'%.2f' % tx.co2e_kg"/></td>
+                                                <td><t t-esc="'%.4f' % tx.co2e_tonnes"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+                        </div>
+
+                        <!-- Environmental Goals -->
+                        <div class="esg-section">
+                            <h2>Environmental Goals Progress</h2>
+                            <table class="esg-table">
+                                <thead>
+                                    <tr>
+                                        <th>Goal</th>
+                                        <th>Department</th>
+                                        <th>Type</th>
+                                        <th>Target</th>
+                                        <th>Current</th>
+                                        <th>Progress</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="environmental_goals" t-as="goal">
+                                        <tr>
+                                            <td><t t-esc="goal.name"/></td>
+                                            <td><t t-esc="goal.department_id.name"/></td>
+                                            <td><t t-esc="goal.goal_type"/></td>
+                                            <td><t t-esc="'%.1f' % goal.target_value"/> <t t-esc="goal.unit"/></td>
+                                            <td><t t-esc="'%.1f' % goal.current_value"/> <t t-esc="goal.unit"/></td>
+                                            <td>
+                                                <div class="progress-bar-wrap">
+                                                    <div class="progress-bar-fill" t-att-style="'width: ' + str(min(goal.progress_percentage, 100)) + '%'"/>
+                                                </div>
+                                                <t t-esc="'%.0f' % goal.progress_percentage"/>%
+                                            </td>
+                                            <td><t t-esc="goal.state"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Template 3: Social Report -->
+    <template id="report_esg_social_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <style>
+                        .esg-report { font-family: Arial, sans-serif; color: #1a1a2e; }
+                        .esg-report-header { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 30px; margin-bottom: 30px; border-radius: 8px; }
+                        .esg-report-header h1 { margin: 0; font-size: 26px; }
+                        .esg-report-header p { margin: 8px 0 0; opacity: 0.85; }
+                        .esg-section { margin-bottom: 30px; }
+                        .esg-section h2 { color: #1e3a8a; border-bottom: 2px solid #3b82f6; padding-bottom: 8px; font-size: 18px; }
+                        table.esg-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+                        table.esg-table th { background: #1e3a8a; color: white; padding: 10px 14px; text-align: left; }
+                        table.esg-table td { padding: 8px 14px; border-bottom: 1px solid #e8e8e8; }
+                        table.esg-table tr:nth-child(even) td { background: #eff6ff; }
+                        .badge-state { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+                        .state-open { background: #dcfce7; color: #166534; }
+                        .state-closed { background: #e5e7eb; color: #374151; }
+                        .state-draft { background: #fef9c3; color: #854d0e; }
+                        .rate-good { color: #059669; font-weight: bold; }
+                        .rate-medium { color: #d97706; font-weight: bold; }
+                        .rate-poor { color: #dc2626; font-weight: bold; }
+                    </style>
+                    <div class="esg-report">
+                        <div class="esg-report-header">
+                            <h1>🤝 Social Report</h1>
+                            <p>CSR Activities, Challenges &amp; Employee Engagement</p>
+                        </div>
+
+                        <!-- CSR Activities -->
+                        <div class="esg-section">
+                            <h2>CSR Activities</h2>
+                            <table class="esg-table">
+                                <thead>
+                                    <tr>
+                                        <th>Activity</th>
+                                        <th>Department</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Participants</th>
+                                        <th>Approved</th>
+                                        <th>XP Reward</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="csr_activities" t-as="act">
+                                        <tr>
+                                            <td><strong><t t-esc="act.name"/></strong></td>
+                                            <td><t t-esc="act.department_id.name"/></td>
+                                            <td><t t-esc="act.start_date"/></td>
+                                            <td><t t-esc="act.end_date"/></td>
+                                            <td><t t-esc="act.participant_count"/></td>
+                                            <td><t t-esc="act.approved_count"/></td>
+                                            <td><t t-esc="act.xp_reward"/></td>
+                                            <td>
+                                                <span t-att-class="'badge-state state-' + act.state">
+                                                    <t t-esc="act.state.capitalize()"/>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Challenge Completion Rates -->
+                        <div class="esg-section">
+                            <h2>Challenge Completion Rates</h2>
+                            <table class="esg-table">
+                                <thead>
+                                    <tr>
+                                        <th>Challenge</th>
+                                        <th>Type</th>
+                                        <th>Participants</th>
+                                        <th>Completed</th>
+                                        <th>Completion Rate</th>
+                                        <th>XP Reward</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="challenges" t-as="chal">
+                                        <tr>
+                                            <td><strong><t t-esc="chal.name"/></strong></td>
+                                            <td><t t-esc="chal.challenge_type"/></td>
+                                            <td><t t-esc="chal.participant_count"/></td>
+                                            <td><t t-esc="chal.completion_count"/></td>
+                                            <td>
+                                                <t t-set="rate" t-value="(chal.completion_count / chal.participant_count * 100) if chal.participant_count else 0"/>
+                                                <span t-att-class="'rate-good' if rate >= 70 else 'rate-medium' if rate >= 40 else 'rate-poor'">
+                                                    <t t-esc="'%.0f' % rate"/>%
+                                                </span>
+                                            </td>
+                                            <td><t t-esc="chal.xp_reward"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Top Participating Employees -->
+                        <div class="esg-section">
+                            <h2>Top Participating Employees</h2>
+                            <table class="esg-table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Department</th>
+                                        <th>Activities Joined</th>
+                                        <th>Challenges Completed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="top_employees" t-as="emp">
+                                        <tr>
+                                            <td><strong><t t-esc="emp['name']"/></strong></td>
+                                            <td><t t-esc="emp['department']"/></td>
+                                            <td><t t-esc="emp['activities']"/></td>
+                                            <td><t t-esc="emp['challenges']"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Template 4: Governance Report -->
+    <template id="report_esg_governance_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <style>
+                        .esg-report { font-family: Arial, sans-serif; color: #1a1a2e; }
+                        .esg-report-header { background: linear-gradient(135deg, #4c1d95, #7c3aed); color: white; padding: 30px; margin-bottom: 30px; border-radius: 8px; }
+                        .esg-report-header h1 { margin: 0; font-size: 26px; }
+                        .esg-report-header p { margin: 8px 0 0; opacity: 0.85; }
+                        .esg-section { margin-bottom: 30px; }
+                        .esg-section h2 { color: #4c1d95; border-bottom: 2px solid #7c3aed; padding-bottom: 8px; font-size: 18px; }
+                        table.esg-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+                        table.esg-table th { background: #4c1d95; color: white; padding: 10px 14px; text-align: left; }
+                        table.esg-table td { padding: 8px 14px; border-bottom: 1px solid #e8e8e8; }
+                        table.esg-table tr:nth-child(even) td { background: #faf5ff; }
+                        .sev-critical { color: #dc2626; font-weight: bold; }
+                        .sev-major { color: #d97706; font-weight: bold; }
+                        .sev-minor { color: #2563eb; font-weight: bold; }
+                        .ack-rate-good { color: #059669; font-weight: bold; }
+                        .ack-rate-medium { color: #d97706; font-weight: bold; }
+                        .ack-rate-poor { color: #dc2626; font-weight: bold; }
+                        .overdue-tag { background: #fee2e2; color: #dc2626; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+                    </style>
+                    <div class="esg-report">
+                        <div class="esg-report-header">
+                            <h1>⚖️ Governance Report</h1>
+                            <p>Policies, Audits &amp; Compliance Overview</p>
+                        </div>
+
+                        <!-- Policy Acknowledgement Rates -->
+                        <div class="esg-section">
+                            <h2>Policy Acknowledgement Rates</h2>
+                            <table class="esg-table">
+                                <thead>
+                                    <tr>
+                                        <th>Policy</th>
+                                        <th>Category</th>
+                                        <th>Version</th>
+                                        <th>Total Sent</th>
+                                        <th>Acknowledged</th>
+                                        <th>Pending</th>
+                                        <th>Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="policies" t-as="pol">
+                                        <t t-set="total_ack" t-value="pol.acknowledgement_count"/>
+                                        <tr>
+                                            <td><strong><t t-esc="pol.name"/></strong></td>
+                                            <td><t t-esc="pol.category"/></td>
+                                            <td><t t-esc="pol.version"/></td>
+                                            <td><t t-esc="total_ack"/></td>
+                                            <td><t t-esc="pol.acknowledgement_ids.filtered(lambda a: a.state == 'acknowledged') | len"/></td>
+                                            <td><t t-esc="pol.acknowledgement_ids.filtered(lambda a: a.state == 'pending') | len"/></td>
+                                            <td>
+                                                <t t-set="ack_rate" t-value="(pol.acknowledgement_ids.filtered(lambda a: a.state == 'acknowledged') | len) / total_ack * 100 if total_ack else 0"/>
+                                                <span t-att-class="'ack-rate-good' if ack_rate >= 90 else 'ack-rate-medium' if ack_rate >= 70 else 'ack-rate-poor'">
+                                                    <t t-esc="'%.0f' % ack_rate"/>%
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Open/Overdue Compliance Issues -->
+                        <div class="esg-section">
+                            <h2>Open &amp; Overdue Compliance Issues</h2>
+                            <table class="esg-table">
+                                <thead>
+                                    <tr>
+                                        <th>Issue</th>
+                                        <th>Severity</th>
+                                        <th>Department</th>
+                                        <th>Responsible</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="compliance_issues" t-as="issue">
+                                        <tr>
+                                            <td>
+                                                <t t-esc="issue.name"/>
+                                                <t t-if="issue.is_overdue">
+                                                    <span class="overdue-tag">OVERDUE</span>
+                                                </t>
+                                            </td>
+                                            <td t-att-class="'sev-' + issue.severity">
+                                                <t t-esc="issue.severity.capitalize()"/>
+                                            </td>
+                                            <td><t t-esc="issue.department_id.name"/></td>
+                                            <td><t t-esc="issue.responsible_id.name"/></td>
+                                            <td><t t-esc="issue.due_date"/></td>
+                                            <td><t t-esc="issue.state.replace('_', ' ').capitalize()"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Audit History -->
+                        <div class="esg-section">
+                            <h2>Audit History</h2>
+                            <table class="esg-table">
+                                <thead>
+                                    <tr>
+                                        <th>Audit</th>
+                                        <th>Type</th>
+                                        <th>Department</th>
+                                        <th>Date</th>
+                                        <th>Auditor</th>
+                                        <th>Overall Score</th>
+                                        <th>Issues Found</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="audits" t-as="audit">
+                                        <tr>
+                                            <td><strong><t t-esc="audit.name"/></strong></td>
+                                            <td><t t-esc="audit.audit_type"/></td>
+                                            <td><t t-esc="audit.department_id.name"/></td>
+                                            <td><t t-esc="audit.audit_date"/></td>
+                                            <td><t t-esc="audit.auditor_id.name"/></td>
+                                            <td><t t-esc="'%.1f' % (audit.overall_score or 0)"/>%</td>
+                                            <td><t t-esc="audit.issue_count"/></td>
+                                            <td><t t-esc="audit.state.replace('_', ' ').capitalize()"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

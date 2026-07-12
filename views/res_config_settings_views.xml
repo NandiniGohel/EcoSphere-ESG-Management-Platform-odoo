@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_esg" model="ir.ui.view">
+        <field name="name">res.config.settings.esg.inherit</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="ESG Management" name="esg_management"
+                     groups="esg_management.group_esg_manager">
+                    <block title="Emissions">
+                        <setting help="Automatically calculate CO2e from purchase orders, fleet, etc.">
+                            <field name="esg_auto_emission_calc"/>
+                            <div class="text-muted">
+                                Enable automatic emission calculation from integrated modules.
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Gamification">
+                        <setting help="Automatically award badges when XP thresholds are reached">
+                            <field name="esg_auto_badge_award"/>
+                            <div class="text-muted">
+                                Badges are awarded automatically when employees reach XP milestones.
+                            </div>
+                        </setting>
+                        <setting help="Require evidence for activity/challenge participation">
+                            <field name="esg_evidence_required_default"/>
+                            <div class="text-muted">
+                                By default, participants must upload evidence for approval.
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Scoring Weights (must sum to 100)">
+                        <setting string="Environmental Weight (%)">
+                            <field name="esg_weight_environmental"/>
+                        </setting>
+                        <setting string="Social Weight (%)">
+                            <field name="esg_weight_social"/>
+                        </setting>
+                        <setting string="Governance Weight (%)">
+                            <field name="esg_weight_governance"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

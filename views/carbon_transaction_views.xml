@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_esg_carbon_transaction_tree" model="ir.ui.view">
+        <field name="name">esg.carbon.transaction.tree</field>
+        <field name="model">esg.carbon.transaction</field>
+        <field name="arch" type="xml">
+            <list string="Carbon Transactions"
+                  decoration-info="entry_type == 'manual'"
+                  decoration-muted="entry_type == 'auto'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="department_id"/>
+                <field name="emission_factor_id"/>
+                <field name="quantity"/>
+                <field name="unit"/>
+                <field name="scope"/>
+                <field name="co2e_kg"/>
+                <field name="co2e_tonnes"/>
+                <field name="entry_type"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_esg_carbon_transaction_form" model="ir.ui.view">
+        <field name="name">esg.carbon.transaction.form</field>
+        <field name="model">esg.carbon.transaction</field>
+        <field name="arch" type="xml">
+            <form string="Carbon Transaction">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Transaction Details">
+                            <field name="date"/>
+                            <field name="department_id"/>
+                            <field name="employee_id"/>
+                            <field name="entry_type"/>
+                            <field name="scope"/>
+                        </group>
+                        <group string="Emission Details">
+                            <field name="emission_factor_id"/>
+                            <field name="quantity"/>
+                            <field name="unit"/>
+                            <field name="co2e_kg" readonly="1"/>
+                            <field name="co2e_tonnes" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Reference">
+                        <group>
+                            <field name="source_model"/>
+                            <field name="source_record_id"/>
+                        </group>
+                        <group>
+                            <field name="notes"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_esg_carbon_transaction_search" model="ir.ui.view">
+        <field name="name">esg.carbon.transaction.search</field>
+        <field name="model">esg.carbon.transaction</field>
+        <field name="arch" type="xml">
+            <search string="Search Carbon Transactions">
+                <field name="name"/>
+                <field name="department_id"/>
+                <field name="entry_type"/>
+                <field name="scope"/>
+                <separator/>
+                <filter string="Scope 1" name="scope1" domain="[('scope', '=', 'scope1')]"/>
+                <filter string="Scope 2" name="scope2" domain="[('scope', '=', 'scope2')]"/>
+                <filter string="Scope 3" name="scope3" domain="[('scope', '=', 'scope3')]"/>
+                <separator/>
+                <filter string="This Month" name="this_month"
+                        domain="[('date', '>=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                  ('date', '&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Auto-calculated" name="auto_calc"
+                        domain="[('entry_type', '=', 'auto')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Department" name="group_dept" context="{'group_by': 'department_id'}"/>
+                    <filter string="Scope" name="group_scope" context="{'group_by': 'scope'}"/>
+                    <filter string="Entry Type" name="group_entry" context="{'group_by': 'entry_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_esg_carbon_transaction" model="ir.actions.act_window">
+        <field name="name">Carbon Transactions</field>
+        <field name="res_model">esg.carbon.transaction</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_esg_carbon_transaction_search"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>
