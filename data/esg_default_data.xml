@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence for Carbon Transactions -->
+        <record id="seq_esg_carbon_transaction" model="ir.sequence">
+            <field name="name">ESG Carbon Transaction Sequence</field>
+            <field name="code">esg.carbon.transaction</field>
+            <field name="prefix">ECT</field>
+            <field name="padding">6</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Default ESG Categories -->
+        <record id="cat_csr_planting" model="esg.category">
+            <field name="name">Tree Planting / Reforestation</field>
+            <field name="type">csr</field>
+            <field name="description">Volunteering for tree planting and environmental restoration initiatives.</field>
+            <field name="color">2</field>
+        </record>
+
+        <record id="cat_csr_recycling" model="esg.category">
+            <field name="name">Recycling &amp; Waste Management</field>
+            <field name="type">csr</field>
+            <field name="description">Activities focusing on plastic reduction, recycling collection, and waste segregation.</field>
+            <field name="color">3</field>
+        </record>
+
+        <record id="cat_challenge_carbon" model="esg.category">
+            <field name="name">Carbon Footprint Reduction</field>
+            <field name="type">challenge</field>
+            <field name="description">Challenges aimed directly at reducing CO₂e emissions.</field>
+            <field name="color">4</field>
+        </record>
+
+        <record id="cat_challenge_energy" model="esg.category">
+            <field name="name">Energy Conservation</field>
+            <field name="type">challenge</field>
+            <field name="description">Challenges focusing on reducing electricity, water, or resource consumption.</field>
+            <field name="color">5</field>
+        </record>
+
+        <!-- Default Emission Factors -->
+        <record id="factor_electricity" model="esg.emission.factor">
+            <field name="name">Electricity (Grid Average)</field>
+            <field name="factor_value">0.233000</field>
+            <field name="unit">kWh</field>
+            <field name="scope">2</field>
+            <field name="source">GHG Protocol 2024</field>
+        </record>
+
+        <record id="factor_natural_gas" model="esg.emission.factor">
+            <field name="name">Natural Gas</field>
+            <field name="factor_value">2.040000</field>
+            <field name="unit">m³</field>
+            <field name="scope">1</field>
+            <field name="source">EPA 2024</field>
+        </record>
+
+        <record id="factor_diesel" model="esg.emission.factor">
+            <field name="name">Diesel (Vehicle Fuel)</field>
+            <field name="factor_value">2.680000</field>
+            <field name="unit">litre</field>
+            <field name="scope">1</field>
+            <field name="source">DEFRA 2023</field>
+        </record>
+
+        <record id="factor_petrol" model="esg.emission.factor">
+            <field name="name">Petrol / Gasoline (Vehicle Fuel)</field>
+            <field name="factor_value">2.310000</field>
+            <field name="unit">litre</field>
+            <field name="scope">1</field>
+            <field name="source">DEFRA 2023</field>
+        </record>
+
+        <record id="factor_flight_short" model="esg.emission.factor">
+            <field name="name">Air Travel (Short Haul &lt; 3700km)</field>
+            <field name="factor_value">0.255000</field>
+            <field name="unit">km</field>
+            <field name="scope">3</field>
+            <field name="source">GHG Protocol 2024</field>
+        </record>
+
+        <record id="factor_flight_long" model="esg.emission.factor">
+            <field name="name">Air Travel (Long Haul &gt; 3700km)</field>
+            <field name="factor_value">0.195000</field>
+            <field name="unit">km</field>
+            <field name="scope">3</field>
+            <field name="source">GHG Protocol 2024</field>
+        </record>
+
+        <!-- Default Badges -->
+        <record id="badge_pioneer" model="esg.badge">
+            <field name="name">ESG Pioneer</field>
+            <field name="description">Earned by passing the initial threshold of 100 ESG XP points.</field>
+            <field name="rule_type">xp_threshold</field>
+            <field name="rule_value">100</field>
+            <field name="xp_reward">0</field>
+        </record>
+
+        <record id="badge_champion" model="esg.badge">
+            <field name="name">Green Champion</field>
+            <field name="description">Earned by accumulating 500 ESG XP points. Awards an extra 50 XP bonus!</field>
+            <field name="rule_type">xp_threshold</field>
+            <field name="rule_value">500</field>
+            <field name="xp_reward">50</field>
+        </record>
+
+        <record id="badge_leader" model="esg.badge">
+            <field name="name">Sustainability Leader</field>
+            <field name="description">Earned by reaching 1000 ESG XP points. Awards an extra 100 XP bonus!</field>
+            <field name="rule_type">xp_threshold</field>
+            <field name="rule_value">1000</field>
+            <field name="xp_reward">100</field>
+        </record>
+
+        <record id="badge_csr_star" model="esg.badge">
+            <field name="name">CSR Star</field>
+            <field name="description">Earned by participating in 5 approved CSR Activities. Awards an extra 25 XP bonus!</field>
+            <field name="rule_type">csr_count</field>
+            <field name="rule_value">5</field>
+            <field name="xp_reward">25</field>
+        </record>
+
+        <record id="badge_challenge_warrior" model="esg.badge">
+            <field name="name">Challenge Warrior</field>
+            <field name="description">Earned by completing 3 sustainability challenges. Awards an extra 25 XP bonus!</field>
+            <field name="rule_type">challenge_count</field>
+            <field name="rule_value">3</field>
+            <field name="xp_reward">25</field>
+        </record>
+    </data>
+</odoo>
