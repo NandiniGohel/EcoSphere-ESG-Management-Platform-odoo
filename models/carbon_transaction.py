@@ -53,6 +53,24 @@ class EsgCarbonTransaction(models.Model):
             dept_id = source_record.department_id.id
         elif hasattr(source_record, 'employee_id') and source_record.employee_id and source_record.employee_id.department_id:
             dept_id = source_record.employee_id.department_id.id
+        
+        # Fallback to checking the creator or editor's department
+        if not dept_id:
+            user = False
+            if hasattr(source_record, 'write_uid') and source_record.write_uid:
+                user = source_record.write_uid
+            elif hasattr(source_record, 'create_uid') and source_record.create_uid:
+                user = source_record.create_uid
+            
+            # Special check for purchase order line which points to order_id
+            if not user and hasattr(source_record, 'order_id') and source_record.order_id:
+                user = source_record.order_id.user_id or source_record.order_id.create_uid
+                
+            if user:
+                employee = self.env['hr.employee'].search([('user_id', '=', user.id)], limit=1)
+                if employee and employee.department_id:
+                    dept_id = employee.department_id.id
+
         if not dept_id:
             return False
         return self.create({
